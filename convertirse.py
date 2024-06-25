@@ -8,7 +8,7 @@ import hashlib
 
 # Set up Streamlit UI
 st.set_page_config(page_title="ConvertirseAI", page_icon="🔄")
-st.image(r'assets/hero.png')
+st.image('assets/hero.png')
 st.caption("Powered by LLaMA3 70b, Langchain, and Groq API")
 
 # Sidebar for API key input
@@ -31,8 +31,8 @@ handle_api()
 try:
     llm = ChatGroq(
         temperature=0.2,
-        model_name="llama3-70b-8192",
-        max_tokens=8192
+        model_name="mixtral-8x7b-32768",
+        max_tokens=32768
     )
 except ValueError as ve:
     st.error(f"Error initializing ChatGroq: {ve}")
@@ -42,27 +42,32 @@ except ValueError as ve:
 conversion_prompt = PromptTemplate(
     input_variables=["source_lang", "target_lang", "code"],
     template="""
-    You are an expert programmer proficient in multiple programming languages. Your task is to convert the given code from {source_lang} to {target_lang}.
-    
-    Please follow these guidelines:
-    1. Maintain the overall structure and logic of the original code.
-    2. Use idiomatic expressions and best practices in the target language.
-    3. Preserve comments and add explanations where necessary.
-    4. If there are language-specific features that don't have direct equivalents, provide the closest alternative and explain the difference.
-    5. Ensure the converted code is complete, correct, and ready to run.
-    6. If the source code is incomplete or contains errors, make reasonable assumptions and note them in comments.
-    7. Include any necessary import statements or library inclusions for the target language.
-    8. If the conversion requires significant changes in architecture or design patterns, explain the reasons for these changes.
-    9. Optimize the code for performance where possible, explaining any optimizations made.
-    10. Ensure proper error handling and input validation in the converted code.
-    
-    Source Language: {source_lang}
-    Target Language: {target_lang}
-    
-    Original Code:
-    ```{source_lang}
-    {code}
-    ```
+        You are an expert programmer proficient in multiple programming languages. Your task is to convert the given code from {source_lang} to {target_lang}.
+
+        Please follow these guidelines:
+        1. Maintain the overall structure and logic of the original code.
+        2. Use idiomatic expressions, coding conventions, and best practices in the target language.
+        3. Preserve comments and add explanations where necessary.
+        4. If there are language-specific features that don't have direct equivalents, provide the closest alternative and explain the difference.
+        5. Ensure the converted code is complete, correct, and ready to run.
+        6. If the source code is incomplete or contains errors, make reasonable assumptions and note them in comments.
+        7. Include any necessary import statements, library inclusions, or module imports for the target language.
+        8. If the conversion requires significant changes in architecture, design patterns, or data structures, explain the reasons for these changes.
+        9. Optimize the code for performance, readability, and maintainability where possible, explaining any optimizations made.
+        10. Ensure proper error handling, input validation, and edge case handling in the converted code.
+        11. Provide clear and concise documentation for the converted code, including function docstrings, code comments, and usage examples.
+        12. If the conversion involves different paradigms (e.g., procedural to object-oriented, imperative to functional), explain the rationale behind the chosen approach.
+        13. Ensure the converted code adheres to the coding style guide and conventions of the target language and ecosystem.
+        14. If the conversion requires the use of external libraries or packages, provide instructions on how to install and import them.
+        15. If the conversion involves platform-specific features or dependencies, mention any compatibility issues or caveats.
+
+        Source Language: {source_lang}
+        Target Language: {target_lang}
+
+        Original Code:
+        ```{source_lang}
+        {code}
+            ```
     
     Please provide the converted code in {target_lang} below:
     """
@@ -116,7 +121,7 @@ if transform_button:
 
                     # Display transformed code
                     st.subheader("Transformed Code")
-                    st.code(response, language=target_lang.lower())
+                    st.write(response, language=target_lang.lower())
 
                     st.success("Code transformation completed successfully!")
                     
